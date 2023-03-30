@@ -25,10 +25,9 @@ def down(event):
     global direction
     direction='down'
 
-def computeNextFrame(numFrame,coordonnee):
+def computeNextFrame(numFrame,coordonnee, objet):
     global direction
-    numFrame=numFrame+1
-    can.delete('all')    
+    numFrame=numFrame+1   
 
 #effacer le canavas
     can.delete('all')
@@ -54,6 +53,33 @@ def computeNextFrame(numFrame,coordonnee):
         coordonnee[1] += 20
         if coordonnee[1] > 500:
             coordonnee[1] = 0
+
+#creer le corp du serpent
+    can.create_rectangle(coordonnee[0], coordonnee[1], coordonnee[0] + 20,coordonnee[1] + 20, outline='yellow', fill='red')
+    
+    for n in  range (1,len(coordonnee)):
+        can.create_recteangle(coordonnee[n][0],coordonnee[n][1],coordonnee[n][0] + 20,
+                              coordonnee[n][1]+20, outline='blue',fill='green')
+    tk.after(100,lambda:computeNextFrame(numFrame,coordonnee))    
+    
+    for n in range(1,len(coordonnee)):
+        if n%2 == 0: 
+            ligne = 'blue'
+            couleur = 'green'
+        else:
+            ligne = 'green'
+            couleur = 'blue'
+        can.create_rectangle(coordonnee[n][0], coordonnee[n][1], coordonnee[n][0] + 20, 
+                         coordonnee[n][1] + 20, outline= ligne, fill= couleur)    
+    # Dessine les objets
+    for p in range(len(objet)):
+        can.create_oval(objet[p][0], objet[p][1], objet[p][0] + 20, 
+                         objet[p][1] + 20, outline= 'red', fill= 'green')   
+ 
+    # Calcule une nouvelle frame dans 100 ms
+    tk.after(100, lambda:computeNextFrame(numFrame,coordonnee, objet))
+
+
 #creer le corp du serpent
     can.create_rectangle(coordonnee[0], coordonnee[1], coordonnee[0] + 20,coordonnee[1] + 20, outline='yellow', fill='red')
     
@@ -61,7 +87,14 @@ def computeNextFrame(numFrame,coordonnee):
         can.create_recteangle(coordonnee[n][0],coordonnee[n][1],coordonnee[n][0] + 20,
                               coordonnee[n][1]+20, outline='blue',fill='green')
     tk.after(100,lambda:computeNextFrame(numFrame,coordonnee))
-
+#dessine les objets
+    for p in range(len (objet)):
+        if coordonnee[0][0]and coordonnee[p][1]== objet [p][1]:
+            objet[0][0]=randint(1,24)*20
+            objet[0][1]=randint(1,24)*20
+            coordonnee.append([-20,-20])
+    tk.after(100,lambda:computeNextFrame(numeFrame,coordonnee,objet))
+    
     can = Canvas(tk, width=500, height=500, bg='black')
 # On affiche le canevas
     can.pack()
@@ -76,7 +109,6 @@ def computeNextFrame(numFrame,coordonnee):
     y= randint(1,24)
     objet.append([x*20, y*20, 0])
 
-computeNextFrame(0,[200,200])
 
 tk.bind('<d>',right)
 tk.bind('<z>',up)
